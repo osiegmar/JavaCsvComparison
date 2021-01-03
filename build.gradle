@@ -1,0 +1,37 @@
+plugins {
+    id 'application'
+    id 'checkstyle'
+    id 'com.github.spotbugs' version '4.5.0'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+application {
+    mainClass = 'comparison.Comparison'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'net.steppschuh.markdowngenerator:markdowngenerator:1.3.1.1'
+    implementation 'de.siegmar:fastcsv:2.0.0'
+    implementation 'com.opencsv:opencsv:5.3'
+    implementation 'org.simpleflatmapper:sfm-csv:8.2.3'
+    implementation 'org.apache.commons:commons-csv:1.8'
+    implementation 'com.univocity:univocity-parsers:2.9.0'
+    implementation 'net.sourceforge.javacsv:javacsv:2.0'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.12.0'
+}
+
+tasks.matching { task -> task.name.startsWith('spotbugs') }.forEach {
+    it.reports {
+        html.enabled = true
+        xml.enabled = false
+    }
+}

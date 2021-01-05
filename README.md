@@ -7,6 +7,9 @@ CSV data that doesn't match this RFC?
 
 This project is about to find that out...
 
+This benchmark project was created for the development of
+[FastCSV](https://github.com/osiegmar/FastCSV).
+
 ## Implementations under test
 
 - Commons CSV 1.8

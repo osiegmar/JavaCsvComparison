@@ -1,7 +1,6 @@
 package comparison;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +19,7 @@ public final class TablePrinter {
 
     static void createTable(final RecordCollector recordCollector) {
         final List<String> names = recordCollector.getNames();
-        Collections.sort(names);
+        names.sort(String.CASE_INSENSITIVE_ORDER);
 
         // map: oddity group | results
         final Map<String, List<List<String>>> oddities = new HashMap<>();

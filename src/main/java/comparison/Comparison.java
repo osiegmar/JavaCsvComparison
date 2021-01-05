@@ -25,13 +25,13 @@ public final class Comparison {
     @SuppressWarnings({"checkstyle:UncommentedMain", "checkstyle:RegexpMultiline"})
     public static void main(final String[] args) throws IOException {
         final List<CsvImpl> csvImplementations = List.of(
-            new FastCsvImpl(),
-            new OpenCsvImpl(),
-            new JavaCsvImpl(),
             new CommonsCsvImpl(),
+            new FastCsvImpl(),
+            new JacksonCsvImpl(),
+            new JavaCsvImpl(),
+            new OpenCsvImpl(),
             new SfmCsvImpl(),
-            new UnivocityImpl(),
-            new JacksonCsvImpl()
+            new UnivocityImpl()
         );
 
         final List<String> implNames = csvImplementations.stream()

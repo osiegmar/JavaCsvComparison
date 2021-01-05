@@ -41,7 +41,9 @@ public final class CharacterConv {
     }
 
     public static String print(final String str) {
-        return str.isEmpty() ? EMPTY_STRING : StringUtils.replaceEach(str, STANDARD, CONV);
+        return str == null || str.isEmpty()
+            ? EMPTY_STRING
+            : StringUtils.replaceEach(str, STANDARD, CONV);
     }
 
     public static String parse(final String str) {

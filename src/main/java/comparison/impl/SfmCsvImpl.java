@@ -16,21 +16,16 @@ public class SfmCsvImpl implements CsvImpl {
 
     @Override
     public List<String[]> readCsv(final String data, final boolean skipEmptyRows) {
-        final List<String[]> list;
+        if (skipEmptyRows) {
+            throw new UnsupportedOperationException();
+        }
+
         try {
-            list = CsvParser.dsl().disableSpecialisedCharConsumer().reader(data).stream()
+            return CsvParser.dsl().disableSpecialisedCharConsumer().reader(data).stream()
                 .collect(Collectors.toList());
         } catch (final IOException e) {
             throw new UncheckedIOException(e);
         }
-
-        if (skipEmptyRows) {
-            return list.stream()
-                .filter(l -> l.length > 0 && !l[0].isEmpty())
-                .collect(Collectors.toList());
-        }
-
-        return list;
     }
 
 }

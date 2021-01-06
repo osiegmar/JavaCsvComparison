@@ -68,6 +68,9 @@ public final class Comparison {
                     allExpected = false;
                 }
                 resultCollector.addRecord(impl.getName(), result);
+            } catch (final UnsupportedOperationException e) {
+                allExpected = false;
+                resultCollector.addRecord(impl.getName(), "[unsupported]");
             } catch (final Exception e) {
                 allExpected = false;
                 resultCollector.addRecord(impl.getName(), "EXCEPTION");

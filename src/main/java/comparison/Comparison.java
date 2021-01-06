@@ -14,6 +14,7 @@ import comparison.impl.JacksonCsvImpl;
 import comparison.impl.JavaCsvImpl;
 import comparison.impl.OpenCsvImpl;
 import comparison.impl.SfmCsvImpl;
+import comparison.impl.SuperCsvImpl;
 import comparison.impl.UnivocityImpl;
 
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
@@ -31,6 +32,7 @@ public final class Comparison {
             new JavaCsvImpl(),
             new OpenCsvImpl(),
             new SfmCsvImpl(),
+            new SuperCsvImpl(),
             new UnivocityImpl()
         );
 

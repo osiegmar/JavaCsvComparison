@@ -18,6 +18,7 @@ This benchmark project was created for the development of
 - JavaCSV 2.0
 - Opencsv 5.3
 - SimpleFlatMapper 8.2.3
+- Super CSV 2.4.0
 - Univocity 2.9.0
 
 ## Execute
@@ -44,35 +45,31 @@ from the outside.
 | `✘`       | Unexpected        |
 
 ## Mixed behaviour
-| Input    | Commons CSV | FastCSV | JacksonCSV  | JavaCSV | Opencsv     | Sfm     | Univocity |
-| -------- | ----------- | ------- | ----------- | ------- | ----------- | ------- | --------- |
-| `A,"B`   | `EXCEPTION` | `A↷B`   | `EXCEPTION` | `A↷B`   | `EXCEPTION` | `A↷B`   | `A↷B`     |
-| `"A,B`   | `EXCEPTION` | `A,B`   | `EXCEPTION` | `A,B`   | `EXCEPTION` | `A,B`   | `A,B`     |
-| `"D"␣`   | `D`         | `D␣`    | `D`         | `D`     | `D␣`        | `D"␣`   | `D`       |
-| `"A,B"␣` | `A,B`       | `A,B␣`  | `A,B`       | `A,B`   | `A,B"␣`     | `A,B"␣` | `A,B`     |
-| `"D"z`   | `EXCEPTION` | `Dz`    | `EXCEPTION` | `D`     | `Dz`        | `D"z`   | `"D"z`    |
-| `"A,B"z` | `EXCEPTION` | `A,Bz`  | `EXCEPTION` | `A,B`   | `A,B"z`     | `A,B"z` | `"A,B"z`  |
+| Input    | Commons CSV | FastCSV  | JacksonCSV  | JavaCSV  | Opencsv     | Sfm      | SuperCSV    | Univocity |
+| -------- | ----------- | -------- | ----------- | -------- | ----------- | -------- | ----------- | --------- |
+| `A,"B`   | `EXCEPTION` | `A↷B`    | `EXCEPTION` | `A↷B`    | `EXCEPTION` | `A↷B`    | `EXCEPTION` | `A↷B`     |
+| `A,B"`   | `A↷B"`      | `A↷B"`   | `A↷B"`      | `A↷B"`   | `EXCEPTION` | `A↷B"`   | `EXCEPTION` | `A↷B"`    |
+| `"A,B`   | `EXCEPTION` | `A,B`    | `EXCEPTION` | `A,B`    | `EXCEPTION` | `A,B`    | `EXCEPTION` | `A,B`     |
+| `"A␍B"`  | `A␍B`       | `A␍B`    | `A␍B`       | `A␍B`    | `A␊B`       | `A␍B`    | `A␊B`       | `A␍B`     |
+| `"A␍␊B"` | `A␍␊B`      | `A␍␊B`   | `A␍␊B`      | `A␍␊B`   | `A␊B`       | `A␍␊B`   | `A␊B`       | `A␍␊B`    |
+| `"D"␣`   | `D`         | `D␣`     | `D`         | `D`      | `D␣`        | `D"␣`    | `D␣`        | `D`       |
+| `"A,B"␣` | `A,B`       | `A,B␣`   | `A,B`       | `A,B`    | `A,B"␣`     | `A,B"␣`  | `A,B␣`      | `A,B`     |
+| `␣"D"`   | `␣"D"`      | `␣"D"`   | `␣"D"`      | `␣"D"`   | `␣D`        | `␣"D"`   | `␣D`        | `␣"D"`    |
+| `␣"D"␣`  | `␣"D"␣`     | `␣"D"␣`  | `␣"D"␣`     | `␣"D"␣`  | `␣D"␣`      | `␣"D"␣`  | `␣D␣`       | `␣"D"␣`   |
+| `"D"z`   | `EXCEPTION` | `Dz`     | `EXCEPTION` | `D`      | `Dz`        | `D"z`    | `Dz`        | `"D"z`    |
+| `"A,B"z` | `EXCEPTION` | `A,Bz`   | `EXCEPTION` | `A,B`    | `A,B"z`     | `A,B"z`  | `A,Bz`      | `"A,B"z`  |
+| `z"D"`   | `z"D"`      | `z"D"`   | `z"D"`      | `z"D"`   | `zD`        | `z"D"`   | `zD`        | `z"D"`    |
+| `z"A,B"` | `z"A↷B"`    | `z"A↷B"` | `z"A↷B"`    | `z"A↷B"` | `zA,B`      | `z"A↷B"` | `zA,B`      | `z"A↷B"`  |
+| `z"D"z`  | `z"D"z`     | `z"D"z`  | `z"D"z`     | `z"D"z`  | `zD"z`      | `z"D"z`  | `zDz`       | `z"D"z`   |
 
 ## Oddities in Univocity
-| Input      | Commons CSV | FastCSV | JacksonCSV | JavaCSV | Opencsv | Sfm   | Univocity |
-| ---------- | ----------- | ------- | ---------- | ------- | ------- | ----- | --------- |
-| `A␍B`      | `A⏎B`       | `A⏎B`   | `A⏎B`      | `A⏎B`   | `A⏎B`   | `A⏎B` | `A␍B ✘`   |
-| `D␍`       | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D␍ ✘`    |
-| `␍D`       | `◯⏎D`       | `◯⏎D`   | `◯⏎D`      | `◯⏎D`   | `◯⏎D`   | `◯⏎D` | `␍D ✘`    |
-| `␍D [SE]`  | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `␍D ✘`    |
-| `A␍␊B`     | `A⏎B`       | `A⏎B`   | `A⏎B`      | `A⏎B`   | `A⏎B`   | `A⏎B` | `A␍⏎B ✘`  |
-| `D␍␊`      | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D␍ ✘`    |
-| `␍␊D`      | `◯⏎D`       | `◯⏎D`   | `◯⏎D`      | `◯⏎D`   | `◯⏎D`   | `◯⏎D` | `␍⏎D ✘`   |
-| `␍␊D [SE]` | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `␍⏎D ✘`   |
-
-## Oddities in Opencsv
-| Input    | Commons CSV | FastCSV  | JacksonCSV | JavaCSV  | Opencsv       | Sfm      | Univocity |
-| -------- | ----------- | -------- | ---------- | -------- | ------------- | -------- | --------- |
-| `A,B"`   | `A↷B"`      | `A↷B"`   | `A↷B"`     | `A↷B"`   | `EXCEPTION ✘` | `A↷B"`   | `A↷B"`    |
-| `"A␍B"`  | `A␍B`       | `A␍B`    | `A␍B`      | `A␍B`    | `A␊B ✘`       | `A␍B`    | `A␍B`     |
-| `"A␍␊B"` | `A␍␊B`      | `A␍␊B`   | `A␍␊B`     | `A␍␊B`   | `A␊B ✘`       | `A␍␊B`   | `A␍␊B`    |
-| `␣"D"`   | `␣"D"`      | `␣"D"`   | `␣"D"`     | `␣"D"`   | `␣D ✘`        | `␣"D"`   | `␣"D"`    |
-| `␣"D"␣`  | `␣"D"␣`     | `␣"D"␣`  | `␣"D"␣`    | `␣"D"␣`  | `␣D"␣ ✘`      | `␣"D"␣`  | `␣"D"␣`   |
-| `z"D"`   | `z"D"`      | `z"D"`   | `z"D"`     | `z"D"`   | `zD ✘`        | `z"D"`   | `z"D"`    |
-| `z"A,B"` | `z"A↷B"`    | `z"A↷B"` | `z"A↷B"`   | `z"A↷B"` | `zA,B ✘`      | `z"A↷B"` | `z"A↷B"`  |
-| `z"D"z`  | `z"D"z`     | `z"D"z`  | `z"D"z`    | `z"D"z`  | `zD"z ✘`      | `z"D"z`  | `z"D"z`   |
+| Input      | Commons CSV | FastCSV | JacksonCSV | JavaCSV | Opencsv | Sfm   | SuperCSV | Univocity |
+| ---------- | ----------- | ------- | ---------- | ------- | ------- | ----- | -------- | --------- |
+| `A␍B`      | `A⏎B`       | `A⏎B`   | `A⏎B`      | `A⏎B`   | `A⏎B`   | `A⏎B` | `A⏎B`    | `A␍B ✘`   |
+| `D␍`       | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D`      | `D␍ ✘`    |
+| `␍D`       | `◯⏎D`       | `◯⏎D`   | `◯⏎D`      | `◯⏎D`   | `◯⏎D`   | `◯⏎D` | `◯⏎D`    | `␍D ✘`    |
+| `␍D [SE]`  | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D`      | `␍D ✘`    |
+| `A␍␊B`     | `A⏎B`       | `A⏎B`   | `A⏎B`      | `A⏎B`   | `A⏎B`   | `A⏎B` | `A⏎B`    | `A␍⏎B ✘`  |
+| `D␍␊`      | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D`      | `D␍ ✘`    |
+| `␍␊D`      | `◯⏎D`       | `◯⏎D`   | `◯⏎D`      | `◯⏎D`   | `◯⏎D`   | `◯⏎D` | `◯⏎D`    | `␍⏎D ✘`   |
+| `␍␊D [SE]` | `D`         | `D`     | `D`        | `D`     | `D`     | `D`   | `D`      | `␍⏎D ✘`   |

@@ -18,8 +18,9 @@ This benchmark project was created for the development of
 - Commons CSV 1.8
 - FastCSV 2.0.0
 - Jackson CSV 2.12.0
-- JavaCSV 2.0
+- Java CSV 2.0
 - Opencsv 5.3
+- sesseltjonna-csv 1.0.20
 - SimpleFlatMapper 8.2.3
 - Super CSV 2.4.0
 - Univocity 2.9.0

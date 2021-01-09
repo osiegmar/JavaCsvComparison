@@ -1,22 +1,43 @@
 package comparison;
 
+import static comparison.CharacterConv.print;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 public class ResultCollector {
 
-    private final Map<String, String> records = new HashMap<>();
+    private final Map<ImplementationResult, DataProvider.TestData> data = new HashMap<>();
 
-    public Map<String, String> getRecords() {
-        return records;
+    public void add(final DataProvider.TestData testData, final String implementationName,
+                    final String result) {
+        final String expected = print(testData.getExpected());
+        final ImplementationResult implementationResult =
+            new ImplementationResult(implementationName, result, expected.equals(result));
+        data.put(implementationResult, testData);
     }
 
-    public void addRecord(final String implName, final String result) {
-        records.put(implName, result);
+    public List<UnexpectedResult> getUnexpectedResults(final String name) {
+        final List<UnexpectedResult> ret = new ArrayList<>();
+        data.entrySet().stream()
+            .filter(e -> e.getKey().getImplementationName().equals(name))
+            .filter(e -> !e.getKey().isExpected())
+            .forEach(e -> ret.add(new UnexpectedResult(e.getValue(), e.getKey().getResult(),
+                findCorrectImplementations(e.getValue()))));
+        return ret;
     }
 
-    public String getValueByImpl(final String name) {
-        return records.get(name);
+    private Set<String> findCorrectImplementations(final DataProvider.TestData testData) {
+        return data.entrySet().stream()
+            .filter(e -> e.getValue() == testData)
+            .filter(e -> e.getKey().isExpected())
+            .map(e -> e.getKey().getImplementationName())
+            .collect(Collectors.toCollection(() -> new TreeSet<>(String.CASE_INSENSITIVE_ORDER)));
     }
 
 }

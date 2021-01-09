@@ -6,6 +6,6 @@ public interface CsvImpl {
 
     String getName();
 
-    List<String[]> readCsv(String data, boolean skipEmptyRows);
+    List<String[]> readCsv(String data, boolean skipEmptyRows) throws Exception;
 
 }

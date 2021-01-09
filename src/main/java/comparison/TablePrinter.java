@@ -1,12 +1,8 @@
 package comparison;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import net.steppschuh.markdowngenerator.table.Table;
 import net.steppschuh.markdowngenerator.table.TableRow;
@@ -17,91 +13,33 @@ public final class TablePrinter {
     private TablePrinter() {
     }
 
-    static void createTable(final RecordCollector recordCollector) {
-        final List<String> names = recordCollector.getNames();
-        names.sort(String.CASE_INSENSITIVE_ORDER);
+    static void createTable(final String name, final List<UnexpectedResult> results) {
+        System.out.println("## Unexpected results in " + name);
 
-        // map: oddity group | results
-        final Map<String, List<List<String>>> oddities = new HashMap<>();
+        final Table.Builder table = new Table.Builder()
+            .addRow("Input", "Flags", name, "Expected", "Implemented as expected by");
 
-        for (final Map.Entry<DataProvider.TestData, ResultCollector> entry
-            : recordCollector.getRecords().entrySet()) {
+        for (final UnexpectedResult result : results) {
+            final TableRow<String> row = new TableRow<>(List.of(
+                fmt(result.getTestData().getInput()),
+                formatInput(result.getTestData()).map(TablePrinter::fmt).orElse("—"),
+                fmt(result.getResult()),
+                fmt(result.getTestData().getExpected()),
+                String.join(", ", result.getCorrectImplementations())
+            ));
 
-            final List<String> vals = new ArrayList<>();
-
-            // Input
-            vals.add(String.format("%s%s", entry.getKey().getInput(), formatInput(entry.getKey())));
-
-            // Common
-            final String commonResult = findCommonResult(analyzeResults(entry.getValue(), names));
-
-            // Determine oddity group
-            final List<String> invalidImpl = names.stream()
-                .filter(n -> !entry.getValue().getValueByImpl(n).equals(commonResult))
-                .collect(Collectors.toList());
-
-            final String oddityGroup = invalidImpl.size() > 1
-                ? "## Mixed behaviour"
-                : "## Oddities in " + invalidImpl.get(0);
-
-            // Results
-            for (final String name : names) {
-                if (invalidImpl.size() > 1) {
-                    vals.add(entry.getValue().getValueByImpl(name));
-                } else {
-                    vals.add(fmt(commonResult, entry.getValue().getValueByImpl(name)));
-                }
-            }
-
-            oddities.computeIfAbsent(oddityGroup, e -> new ArrayList<>())
-                .add(vals);
+            table.addRow(row);
         }
 
-        print(names, oddities);
+        System.out.println(table.build());
+        System.out.println();
     }
 
-    private static void print(final List<String> names,
-                              final Map<String, List<List<String>>> tableIn) {
-
-        for (final Map.Entry<String, List<List<String>>> entry : tableIn.entrySet()) {
-            System.out.println(entry.getKey());
-
-            final List<String> header = new ArrayList<>();
-            header.add("Input");
-            header.addAll(names);
-
-            final Table.Builder table = new Table.Builder()
-                .addRow(new TableRow<>(header));
-
-            for (final List<String> strings : entry.getValue()) {
-                final List<String> collect = strings.stream().map(s -> "`" + s + "`")
-                    .collect(Collectors.toList());
-                table.addRow(new TableRow<>(collect));
-            }
-
-            System.out.println(table.build());
-            System.out.println();
-        }
+    private static String fmt(final String s) {
+        return '`' + s + '`';
     }
 
-    private static Map<String, AtomicInteger> analyzeResults(final ResultCollector value,
-                                                             final List<String> names) {
-
-        final Map<String, AtomicInteger> vals = new HashMap<>();
-        for (final String name : names) {
-            vals.computeIfAbsent(value.getValueByImpl(name), e -> new AtomicInteger(0))
-                .incrementAndGet();
-        }
-        return vals;
-    }
-
-    private static String findCommonResult(final Map<String, AtomicInteger> vals) {
-        return vals.entrySet().stream()
-            .max(Comparator.comparing(e -> e.getValue().get()))
-            .orElseThrow(IllegalStateException::new).getKey();
-    }
-
-    private static String formatInput(final DataProvider.TestData key) {
+    private static Optional<String> formatInput(final DataProvider.TestData key) {
         final List<String> l = new ArrayList<>();
         if (key.isSkipEmptyLines()) {
             l.add("SE");
@@ -113,11 +51,7 @@ public final class TablePrinter {
             l.add("RC");
         }
 
-        return l.isEmpty() ? "" : " [" + String.join(",", l) + "]";
-    }
-
-    static String fmt(final String commonResult, final String actual) {
-        return actual + (commonResult.equals(actual) ? "" : " ✘");
+        return l.isEmpty() ? Optional.empty() : Optional.of("[" + String.join(",", l) + "]");
     }
 
 }

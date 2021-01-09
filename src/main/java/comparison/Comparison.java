@@ -5,7 +5,7 @@ import static comparison.CharacterConv.print;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import comparison.impl.CommonsCsvImpl;
 import comparison.impl.CsvImpl;
@@ -21,65 +21,55 @@ import comparison.impl.UnivocityImpl;
 @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public final class Comparison {
 
+    private static final List<CsvImpl> IMPLS = List.of(
+        new CommonsCsvImpl(),
+        new FastCsvImpl(),
+        new JacksonCsvImpl(),
+        new JavaCsvImpl(),
+        new OpenCsvImpl(),
+        new SesseltjonnaCsvImpl(),
+        new SfmCsvImpl(),
+        new SuperCsvImpl(),
+        new UnivocityImpl()
+    );
+
     private Comparison() {
     }
 
-    @SuppressWarnings({"checkstyle:UncommentedMain", "checkstyle:RegexpMultiline"})
+    @SuppressWarnings("checkstyle:UncommentedMain")
     public static void main(final String[] args) throws IOException {
-        final List<CsvImpl> csvImplementations = List.of(
-            new CommonsCsvImpl(),
-            new FastCsvImpl(),
-            new JacksonCsvImpl(),
-            new JavaCsvImpl(),
-            new OpenCsvImpl(),
-            new SesseltjonnaCsvImpl(),
-            new SfmCsvImpl(),
-            new SuperCsvImpl(),
-            new UnivocityImpl()
-        );
+        final List<DataProvider.TestData> testData = DataProvider.loadTestData("/test.txt");
 
-        final List<String> implNames = csvImplementations.stream()
-            .map(CsvImpl::getName)
-            .collect(Collectors.toList());
+        final ResultCollector resultCollector = new ResultCollector();
 
-        final RecordCollector recordCollector = new RecordCollector(implNames);
-
-        for (final DataProvider.TestData data : DataProvider.loadTestData("/test.txt")) {
-            final ResultCollector resultCollector = new ResultCollector();
-
-            final boolean allExpected = dataTest(csvImplementations, data, resultCollector);
-            if (!allExpected) {
-                recordCollector.addRecord(data, resultCollector);
+        for (final CsvImpl csvImplementation : IMPLS) {
+            for (final DataProvider.TestData data : testData) {
+                dataTest(csvImplementation, data).ifPresent(result ->
+                    resultCollector.add(data, csvImplementation.getName(), result));
             }
         }
 
-        TablePrinter.createTable(recordCollector);
+        for (final CsvImpl csvImplementation : IMPLS) {
+            final List<UnexpectedResult> unexpectedResults =
+                resultCollector.getUnexpectedResults(csvImplementation.getName());
+
+            if (!unexpectedResults.isEmpty()) {
+                TablePrinter.createTable(csvImplementation.getName(), unexpectedResults);
+            }
+        }
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private static boolean dataTest(final List<CsvImpl> impls, final DataProvider.TestData data,
-                                    final ResultCollector resultCollector) {
-        final String expected = print(data.getExpected());
+    private static Optional<String> dataTest(final CsvImpl impl, final DataProvider.TestData data) {
         final String parsedSource = parse(data.getInput());
 
-        boolean allExpected = true;
-        for (final CsvImpl impl : impls) {
-            try {
-                final String result = print(impl.readCsv(parsedSource, data.isSkipEmptyLines()));
-                if (!expected.equals(result)) {
-                    allExpected = false;
-                }
-                resultCollector.addRecord(impl.getName(), result);
-            } catch (final UnsupportedOperationException e) {
-                allExpected = false;
-                resultCollector.addRecord(impl.getName(), "[unsupported]");
-            } catch (final Exception e) {
-                allExpected = false;
-                resultCollector.addRecord(impl.getName(), "EXCEPTION");
-            }
+        try {
+            return Optional.of(print(impl.readCsv(parsedSource, data.isSkipEmptyLines())));
+        } catch (final UnsupportedOperationException e) {
+            return Optional.empty();
+        } catch (final Exception e) {
+            return Optional.of(e.getClass().getName());
         }
-
-        return allExpected;
     }
 
 }

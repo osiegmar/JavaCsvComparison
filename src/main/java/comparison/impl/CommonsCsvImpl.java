@@ -2,7 +2,6 @@ package comparison.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,22 +17,23 @@ public class CommonsCsvImpl implements CsvImpl {
     }
 
     @Override
-    public List<String[]> readCsv(final String data, final boolean skipEmptyRows) {
+    public List<String[]> readCsv(final String data, final boolean skipEmptyRows)
+        throws IOException {
+
+        final CSVFormat format = CSVFormat.DEFAULT
+            .withIgnoreEmptyLines(skipEmptyRows);
+
+        final CSVParser parser = new CSVParser(new StringReader(data), format);
+
         final List<String[]> ret = new ArrayList<>();
-        try {
-            final CSVFormat format = CSVFormat.DEFAULT
-                .withIgnoreEmptyLines(skipEmptyRows);
-            final CSVParser parser = new CSVParser(new StringReader(data), format);
-            for (final CSVRecord rec : parser) {
-                final List<String> row = new ArrayList<>();
-                for (final String s : rec) {
-                    row.add(s);
-                }
-                ret.add(row.toArray(new String[0]));
+        for (final CSVRecord rec : parser) {
+            final List<String> row = new ArrayList<>();
+            for (final String s : rec) {
+                row.add(s);
             }
-        } catch (final IOException e) {
-            throw new UncheckedIOException(e);
+            ret.add(row.toArray(new String[0]));
         }
+
         return ret;
     }
 

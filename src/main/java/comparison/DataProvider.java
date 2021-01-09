@@ -60,7 +60,6 @@ public final class DataProvider {
         private final boolean skipEmptyLines;
         private final boolean readComments;
         private final boolean skipComments;
-        private final boolean illegalInput;
 
         TestData(final int lineNo, final String line, final String input, final String expected,
                  final String flags) {
@@ -71,7 +70,6 @@ public final class DataProvider {
             skipEmptyLines = "skipEmptyLines".equals(flags);
             readComments = "readComments".equals(flags);
             skipComments = "skipComments".equals(flags);
-            illegalInput = "illegalInput".equals(flags);
         }
 
         public int getLineNo() {
@@ -102,10 +100,6 @@ public final class DataProvider {
             return skipComments;
         }
 
-        public boolean isIllegalInput() {
-            return illegalInput;
-        }
-
         @Override
         public String toString() {
             return new StringJoiner(", ", DataProvider.TestData.class.getSimpleName() + "[", "]")
@@ -116,7 +110,6 @@ public final class DataProvider {
                 .add("skipEmptyLines=" + skipEmptyLines)
                 .add("readComments=" + readComments)
                 .add("skipComments=" + skipComments)
-                .add("illegalInput=" + illegalInput)
                 .toString();
         }
 

@@ -5,7 +5,6 @@ import static comparison.CharacterConv.print;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 import comparison.impl.CommonsCsvImpl;
 import comparison.impl.CsvImpl;
@@ -42,13 +41,15 @@ public final class Comparison {
 
         final ResultCollector resultCollector = new ResultCollector();
 
+        // Execute tests and collect results
         for (final CsvImpl csvImplementation : IMPLS) {
             for (final DataProvider.TestData data : testData) {
-                dataTest(csvImplementation, data).ifPresent(result ->
-                    resultCollector.add(data, csvImplementation.getName(), result));
+                resultCollector.add(data, csvImplementation.getName(),
+                    dataTest(csvImplementation, data));
             }
         }
 
+        // Print results
         for (final CsvImpl csvImplementation : IMPLS) {
             final List<UnexpectedResult> unexpectedResults =
                 resultCollector.getUnexpectedResults(csvImplementation.getName());
@@ -57,23 +58,25 @@ public final class Comparison {
                 TablePrinter.createTable(csvImplementation.getName(), unexpectedResults);
             }
         }
+
+        // Print big picture
+        TablePrinter.createTable(testData, resultCollector);
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private static Optional<Result> dataTest(final CsvImpl impl, final DataProvider.TestData data) {
+    private static Result dataTest(final CsvImpl impl, final DataProvider.TestData data) {
         final String parsedSource = parse(data.getInput());
 
         Result value;
         try {
-            value = new Result(
-                print(impl.readCsv(parsedSource, data.isSkipEmptyLines())), false);
+            value = Result.result(print(impl.readCsv(parsedSource, data.isSkipEmptyLines())));
         } catch (final UnsupportedOperationException e) {
-            return Optional.empty();
+            value = Result.unsupported();
         } catch (final Exception e) {
-            value = new Result(e.getClass().getSimpleName(), true);
+            value = Result.exception(e.getClass().getSimpleName());
         }
 
-        return Optional.of(value);
+        return value;
     }
 
 }

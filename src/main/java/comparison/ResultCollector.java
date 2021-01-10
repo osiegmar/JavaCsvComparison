@@ -15,6 +15,10 @@ public class ResultCollector {
 
     private final Map<ImplementationResult, DataProvider.TestData> data = new HashMap<>();
 
+    public Map<ImplementationResult, DataProvider.TestData> getData() {
+        return data;
+    }
+
     public void add(final DataProvider.TestData testData, final String implementationName,
                     final Result result) {
         final String expected = print(testData.getExpected());

@@ -36,7 +36,11 @@ public final class TablePrinter {
     }
 
     private static String fmtResult(final Result result) {
-        return (result.isException() ? ":boom: " : "") + result.getText();
+        if (result.isException()) {
+            return ":boom: " + result.getText();
+        }
+
+        return "`" + result.getText() + "`";
     }
 
     private static String fmt(final String s) {

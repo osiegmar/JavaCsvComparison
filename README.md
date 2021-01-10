@@ -52,8 +52,8 @@ from the outside.
 | -------- | ----- | ---------------------------- | -------- | --------------------------------------------- |
 | `A,"B`   | —     | :boom: IllegalStateException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
 | `"A,B`   | —     | :boom: IllegalStateException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
-| `"D"␣`   | —     | D                            | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
-| `"A,B"␣` | —     | A,B                          | `A,B␣`   | FastCSV, SuperCSV                             |
+| `"D"␣`   | —     | `D`                          | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
+| `"A,B"␣` | —     | `A,B`                        | `A,B␣`   | FastCSV, SuperCSV                             |
 | `"D"z`   | —     | :boom: IllegalStateException | `Dz`     | FastCSV, Opencsv, SuperCSV                    |
 | `"A,B"z` | —     | :boom: IllegalStateException | `A,Bz`   | FastCSV, SuperCSV                             |
 
@@ -62,18 +62,18 @@ from the outside.
 | -------- | ----- | ---------------------------------- | -------- | --------------------------------------------- |
 | `A,"B`   | —     | :boom: RuntimeJsonMappingException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
 | `"A,B`   | —     | :boom: RuntimeJsonMappingException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
-| `"D"␣`   | —     | D                                  | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
-| `"A,B"␣` | —     | A,B                                | `A,B␣`   | FastCSV, SuperCSV                             |
+| `"D"␣`   | —     | `D`                                | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
+| `"A,B"␣` | —     | `A,B`                              | `A,B␣`   | FastCSV, SuperCSV                             |
 | `"D"z`   | —     | :boom: RuntimeJsonMappingException | `Dz`     | FastCSV, Opencsv, SuperCSV                    |
 | `"A,B"z` | —     | :boom: RuntimeJsonMappingException | `A,Bz`   | FastCSV, SuperCSV                             |
 
 ## Unexpected results in JavaCSV
 | Input    | Flags | JavaCSV | Expected | Implemented as expected by |
 | -------- | ----- | ------- | -------- | -------------------------- |
-| `"D"␣`   | —     | D       | `D␣`     | FastCSV, Opencsv, SuperCSV |
-| `"A,B"␣` | —     | A,B     | `A,B␣`   | FastCSV, SuperCSV          |
-| `"D"z`   | —     | D       | `Dz`     | FastCSV, Opencsv, SuperCSV |
-| `"A,B"z` | —     | A,B     | `A,Bz`   | FastCSV, SuperCSV          |
+| `"D"␣`   | —     | `D`     | `D␣`     | FastCSV, Opencsv, SuperCSV |
+| `"A,B"␣` | —     | `A,B`   | `A,B␣`   | FastCSV, SuperCSV          |
+| `"D"z`   | —     | `D`     | `Dz`     | FastCSV, Opencsv, SuperCSV |
+| `"A,B"z` | —     | `A,B`   | `A,Bz`   | FastCSV, SuperCSV          |
 
 ## Unexpected results in Opencsv
 | Input    | Flags | Opencsv                          | Expected | Implemented as expected by                                                               |
@@ -81,40 +81,40 @@ from the outside.
 | `A,"B`   | —     | :boom: CsvMalformedLineException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                            |
 | `A,B"`   | —     | :boom: CsvMalformedLineException | `A↷B"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
 | `"A,B`   | —     | :boom: CsvMalformedLineException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                            |
-| `"A␍B"`  | —     | A␊B                              | `A␍B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A␍␊B"` | —     | A␊B                              | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A,B"␣` | —     | A,B"␣                            | `A,B␣`   | FastCSV, SuperCSV                                                                        |
-| `␣"D"`   | —     | ␣D                               | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `␣"D"␣`  | —     | ␣D"␣                             | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A,B"z` | —     | A,B"z                            | `A,Bz`   | FastCSV, SuperCSV                                                                        |
-| `z"D"`   | —     | zD                               | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `z"A,B"` | —     | zA,B                             | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `z"D"z`  | —     | zD"z                             | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A␍B"`  | —     | `A␊B`                            | `A␍B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A␍␊B"` | —     | `A␊B`                            | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A,B"␣` | —     | `A,B"␣`                          | `A,B␣`   | FastCSV, SuperCSV                                                                        |
+| `␣"D"`   | —     | `␣D`                             | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `␣"D"␣`  | —     | `␣D"␣`                           | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A,B"z` | —     | `A,B"z`                          | `A,Bz`   | FastCSV, SuperCSV                                                                        |
+| `z"D"`   | —     | `zD`                             | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `z"A,B"` | —     | `zA,B`                           | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `z"D"z`  | —     | `zD"z`                           | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
 
 ## Unexpected results in sesseltjonna-csv
 | Input      | Flags | sesseltjonna-csv                      | Expected   | Implemented as expected by                                                                |
 | ---------- | ----- | ------------------------------------- | ---------- | ----------------------------------------------------------------------------------------- |
 | `A,␊B`     | —     | :boom: CsvException                   | `A↷◯⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
 | `␣,␊D`     | —     | :boom: CsvException                   | `␣↷◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
-| `A␍B`      | —     | A␍B                                   | `A⏎B`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV            |
-| `␍D`       | —     | ␍D                                    | `◯⏎D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV            |
+| `A␍B`      | —     | `A␍B`                                 | `A⏎B`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV            |
+| `␍D`       | —     | `␍D`                                  | `◯⏎D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV            |
 | `A,"B`     | —     | :boom: ArrayIndexOutOfBoundsException | `A↷B`      | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                             |
 | `"A,B`     | —     | :boom: ArrayIndexOutOfBoundsException | `A,B`      | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                             |
-| `A␊B,C`    | —     | A⏎B,C                                 | `A⏎B↷C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
+| `A␊B,C`    | —     | `A⏎B,C`                               | `A⏎B↷C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
 | `A,B␊C`    | —     | :boom: CsvException                   | `A↷B⏎C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
-| `A␊;B,C␊D` | —     | A⏎;B,C⏎D                              | `A⏎;B↷C⏎D` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
-| `"D"␣`     | —     | D                                     | `D␣`       | FastCSV, Opencsv, SuperCSV                                                                |
-| `"A,B"␣`   | —     | A,B                                   | `A,B␣`     | FastCSV, SuperCSV                                                                         |
-| `"D"z`     | —     | D                                     | `Dz`       | FastCSV, Opencsv, SuperCSV                                                                |
-| `"A,B"z`   | —     | A,B                                   | `A,Bz`     | FastCSV, SuperCSV                                                                         |
+| `A␊;B,C␊D` | —     | `A⏎;B,C⏎D`                            | `A⏎;B↷C⏎D` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV, Univocity |
+| `"D"␣`     | —     | `D`                                   | `D␣`       | FastCSV, Opencsv, SuperCSV                                                                |
+| `"A,B"␣`   | —     | `A,B`                                 | `A,B␣`     | FastCSV, SuperCSV                                                                         |
+| `"D"z`     | —     | `D`                                   | `Dz`       | FastCSV, Opencsv, SuperCSV                                                                |
+| `"A,B"z`   | —     | `A,B`                                 | `A,Bz`     | FastCSV, SuperCSV                                                                         |
 
 ## Unexpected results in Simpleflatmapper
 | Input    | Flags | Simpleflatmapper | Expected | Implemented as expected by |
 | -------- | ----- | ---------------- | -------- | -------------------------- |
-| `"D"␣`   | —     | D"␣              | `D␣`     | FastCSV, Opencsv, SuperCSV |
-| `"A,B"␣` | —     | A,B"␣            | `A,B␣`   | FastCSV, SuperCSV          |
-| `"D"z`   | —     | D"z              | `Dz`     | FastCSV, Opencsv, SuperCSV |
-| `"A,B"z` | —     | A,B"z            | `A,Bz`   | FastCSV, SuperCSV          |
+| `"D"␣`   | —     | `D"␣`            | `D␣`     | FastCSV, Opencsv, SuperCSV |
+| `"A,B"␣` | —     | `A,B"␣`          | `A,B␣`   | FastCSV, SuperCSV          |
+| `"D"z`   | —     | `D"z`            | `Dz`     | FastCSV, Opencsv, SuperCSV |
+| `"A,B"z` | —     | `A,B"z`          | `A,Bz`   | FastCSV, SuperCSV          |
 
 ## Unexpected results in SuperCSV
 | Input    | Flags | SuperCSV                 | Expected | Implemented as expected by                                                               |
@@ -122,26 +122,26 @@ from the outside.
 | `A,"B`   | —     | :boom: SuperCsvException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                            |
 | `A,B"`   | —     | :boom: SuperCsvException | `A↷B"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
 | `"A,B`   | —     | :boom: SuperCsvException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity                                            |
-| `"A␍B"`  | —     | A␊B                      | `A␍B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A␍␊B"` | —     | A␊B                      | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `␣"D"`   | —     | ␣D                       | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `␣"D"␣`  | —     | ␣D␣                      | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `z"D"`   | —     | zD                       | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `z"A,B"` | —     | zA,B                     | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `z"D"z`  | —     | zDz                      | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A␍B"`  | —     | `A␊B`                    | `A␍B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `"A␍␊B"` | —     | `A␊B`                    | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `␣"D"`   | —     | `␣D`                     | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `␣"D"␣`  | —     | `␣D␣`                    | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `z"D"`   | —     | `zD`                     | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `z"A,B"` | —     | `zA,B`                   | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
+| `z"D"z`  | —     | `zDz`                    | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, sesseltjonna-csv, Simpleflatmapper, Univocity |
 
 ## Unexpected results in Univocity
 | Input    | Flags  | Univocity | Expected | Implemented as expected by                                                                       |
 | -------- | ------ | --------- | -------- | ------------------------------------------------------------------------------------------------ |
-| `A␍B`    | —      | A␍B       | `A⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                   |
-| `D␍`     | —      | D␍        | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `␍D`     | —      | ␍D        | `◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                   |
-| `␍D`     | `[SE]` | ␍D        | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                              |
-| `A␍␊B`   | —      | A␍⏎B      | `A⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `D␍␊`    | —      | D␍        | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `␍␊D`    | —      | ␍⏎D       | `◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `␍␊D`    | `[SE]` | ␍⏎D       | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                              |
-| `"D"␣`   | —      | D         | `D␣`     | FastCSV, Opencsv, SuperCSV                                                                       |
-| `"A,B"␣` | —      | A,B       | `A,B␣`   | FastCSV, SuperCSV                                                                                |
-| `"D"z`   | —      | "D"z      | `Dz`     | FastCSV, Opencsv, SuperCSV                                                                       |
-| `"A,B"z` | —      | "A,B"z    | `A,Bz`   | FastCSV, SuperCSV                                                                                |
+| `A␍B`    | —      | `A␍B`     | `A⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                   |
+| `D␍`     | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
+| `␍D`     | —      | `␍D`      | `◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                   |
+| `␍D`     | `[SE]` | `␍D`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                              |
+| `A␍␊B`   | —      | `A␍⏎B`    | `A⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
+| `D␍␊`    | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
+| `␍␊D`    | —      | `␍⏎D`     | `◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
+| `␍␊D`    | `[SE]` | `␍⏎D`     | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                              |
+| `"D"␣`   | —      | `D`       | `D␣`     | FastCSV, Opencsv, SuperCSV                                                                       |
+| `"A,B"␣` | —      | `A,B`     | `A,B␣`   | FastCSV, SuperCSV                                                                                |
+| `"D"z`   | —      | `"D"z`    | `Dz`     | FastCSV, Opencsv, SuperCSV                                                                       |
+| `"A,B"z` | —      | `"A,B"z`  | `A,Bz`   | FastCSV, SuperCSV                                                                                |

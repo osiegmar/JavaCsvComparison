@@ -3,6 +3,7 @@ package comparison;
 import static comparison.CharacterConv.print;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,10 @@ public class ResultCollector {
     private final Map<ImplementationResult, DataProvider.TestData> data = new HashMap<>();
 
     public void add(final DataProvider.TestData testData, final String implementationName,
-                    final String result) {
+                    final Result result) {
         final String expected = print(testData.getExpected());
         final ImplementationResult implementationResult =
-            new ImplementationResult(implementationName, result, expected.equals(result));
+            new ImplementationResult(implementationName, result, expected.equals(result.getText()));
         data.put(implementationResult, testData);
     }
 
@@ -29,6 +30,9 @@ public class ResultCollector {
             .filter(e -> !e.getKey().isExpected())
             .forEach(e -> ret.add(new UnexpectedResult(e.getValue(), e.getKey().getResult(),
                 findCorrectImplementations(e.getValue()))));
+
+        ret.sort(Comparator.comparing(e -> e.getTestData().getLineNo()));
+
         return ret;
     }
 

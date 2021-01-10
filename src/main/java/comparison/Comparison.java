@@ -60,16 +60,20 @@ public final class Comparison {
     }
 
     @SuppressWarnings("checkstyle:IllegalCatch")
-    private static Optional<String> dataTest(final CsvImpl impl, final DataProvider.TestData data) {
+    private static Optional<Result> dataTest(final CsvImpl impl, final DataProvider.TestData data) {
         final String parsedSource = parse(data.getInput());
 
+        Result value;
         try {
-            return Optional.of(print(impl.readCsv(parsedSource, data.isSkipEmptyLines())));
+            value = new Result(
+                print(impl.readCsv(parsedSource, data.isSkipEmptyLines())), false);
         } catch (final UnsupportedOperationException e) {
             return Optional.empty();
         } catch (final Exception e) {
-            return Optional.of(e.getClass().getName());
+            value = new Result(e.getClass().getSimpleName(), true);
         }
+
+        return Optional.of(value);
     }
 
 }

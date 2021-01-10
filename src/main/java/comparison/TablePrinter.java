@@ -23,7 +23,7 @@ public final class TablePrinter {
             final TableRow<String> row = new TableRow<>(List.of(
                 fmt(result.getTestData().getInput()),
                 formatInput(result.getTestData()).map(TablePrinter::fmt).orElse("—"),
-                fmt(result.getResult()),
+                fmtResult(result.getResult()),
                 fmt(result.getTestData().getExpected()),
                 String.join(", ", result.getCorrectImplementations())
             ));
@@ -33,6 +33,10 @@ public final class TablePrinter {
 
         System.out.println(table.build());
         System.out.println();
+    }
+
+    private static String fmtResult(final Result result) {
+        return (result.isException() ? ":boom: " : "") + result.getText();
     }
 
     private static String fmt(final String s) {

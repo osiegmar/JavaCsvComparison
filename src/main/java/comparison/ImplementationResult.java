@@ -3,10 +3,10 @@ package comparison;
 public class ImplementationResult {
 
     private final String implementationName;
-    private final String result;
+    private final Result result;
     private final boolean expected;
 
-    public ImplementationResult(final String implementationName, final String result,
+    public ImplementationResult(final String implementationName, final Result result,
                                 final boolean expected) {
         this.implementationName = implementationName;
         this.result = result;
@@ -17,7 +17,7 @@ public class ImplementationResult {
         return implementationName;
     }
 
-    public String getResult() {
+    public Result getResult() {
         return result;
     }
 

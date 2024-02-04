@@ -21,7 +21,8 @@ public class CommonsCsvImpl implements CsvImpl {
         throws IOException {
 
         final CSVFormat format = CSVFormat.DEFAULT
-            .withIgnoreEmptyLines(skipEmptyRows);
+            .builder().setIgnoreEmptyLines(skipEmptyRows)
+            .build();
 
         final CSVParser parser = new CSVParser(new StringReader(data), format);
 

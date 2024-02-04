@@ -14,9 +14,9 @@ public class FastCsvImpl implements CsvImpl {
 
     @Override
     public List<String[]> readCsv(final String data, final boolean skipEmptyRows) {
-        return CsvReader.builder().skipEmptyRows(skipEmptyRows)
-            .build(data).stream()
-            .map(row -> row.getFields().toArray(new String[0]))
+        return CsvReader.builder().skipEmptyLines(skipEmptyRows)
+            .ofCsvRecord(data).stream()
+            .map(rec -> rec.getFields().toArray(new String[0]))
             .collect(Collectors.toList());
     }
 

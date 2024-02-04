@@ -15,12 +15,12 @@ This benchmark project was created for the development of
 
 ## Implementations under test
 
-- Commons CSV 1.8
-- FastCSV 2.1.0
-- Jackson CSV 2.13.0
+- Commons CSV 1.10.0
+- FastCSV 3.0.0
+- Jackson CSV 2.16.1
 - Java CSV 2.0
-- Opencsv 5.5.2
-- sesseltjonna-csv 1.0.23
+- Opencsv 5.9
+- sesseltjonna-csv 1.0.25
 - SimpleFlatMapper 8.2.3
 - Super CSV 2.4.0
 - Univocity 2.9.1
@@ -48,14 +48,14 @@ from the outside.
 | `∅`       | Empty list        |
 
 ## Unexpected results in Commons CSV
-| Input    | Flags | Commons CSV                  | Expected | Implemented as expected by                    |
-| -------- | ----- | ---------------------------- | -------- | --------------------------------------------- |
-| `A,"B`   | —     | :boom: IllegalStateException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
-| `"A,B`   | —     | :boom: IllegalStateException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
-| `"D"␣`   | —     | `D`                          | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
-| `"A,B"␣` | —     | `A,B`                        | `A,B␣`   | FastCSV, SuperCSV                             |
-| `"D"z`   | —     | :boom: IllegalStateException | `Dz`     | FastCSV, Opencsv, SuperCSV                    |
-| `"A,B"z` | —     | :boom: IllegalStateException | `A,Bz`   | FastCSV, SuperCSV                             |
+| Input    | Flags | Commons CSV                 | Expected | Implemented as expected by                    |
+| -------- | ----- | --------------------------- | -------- | --------------------------------------------- |
+| `A,"B`   | —     | :boom: UncheckedIOException | `A↷B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
+| `"A,B`   | —     | :boom: UncheckedIOException | `A,B`    | FastCSV, JavaCSV, Simpleflatmapper, Univocity |
+| `"D"␣`   | —     | `D`                         | `D␣`     | FastCSV, Opencsv, SuperCSV                    |
+| `"A,B"␣` | —     | `A,B`                       | `A,B␣`   | FastCSV, SuperCSV                             |
+| `"D"z`   | —     | :boom: UncheckedIOException | `Dz`     | FastCSV, Opencsv, SuperCSV                    |
+| `"A,B"z` | —     | :boom: UncheckedIOException | `A,Bz`   | FastCSV, SuperCSV                             |
 
 ## Unexpected results in JacksonCSV
 | Input    | Flags | JacksonCSV                         | Expected | Implemented as expected by                    |

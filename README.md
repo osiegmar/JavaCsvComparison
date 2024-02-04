@@ -1,8 +1,8 @@
 # Parsing non-standard CSV with different Java CSV libraries
 
-Unfortunately there is no real industry standard for CSV files. The closest thing we do currently
-have (since 2005) is [RFC 4180](https://tools.ietf.org/html/rfc4180).
-Working with non-standardized data often comes with surprises but what exactly happens when parsing
+Unfortunately, there is no real industry standard for CSV files.
+The closest thing we do currently have (since 2005) is [RFC 4180](https://tools.ietf.org/html/rfc4180).
+Working with non-standardized data often comes with surprises, but what exactly happens when parsing
 CSV data that doesn't match this RFC?
 
 This project is about to find that out...
@@ -10,8 +10,9 @@ This project is about to find that out...
 This benchmark project was created for the development of
 [FastCSV](https://github.com/osiegmar/FastCSV).
 
-> :warning: Due to the fact that this comparison uses the result of FastCSV as a reference value
-> (expected result) the comparison is highly biased.
+> [!NOTE]
+> Since this comparison uses the result of FastCSV as a reference value (expected result), the comparison is highly
+> biased.
 
 ## Implementations under test
 
@@ -31,7 +32,7 @@ This benchmark project was created for the development of
 
 # Results
 
-In order to have results which are easy to compare (even with multi-line records) we need to use
+To have results which are unambiguous to compare (even with multi-line records), we need to use
 some special characters.
 The libraries itself don't get in touch with these special characters as the conversion is done
 from the outside.

@@ -28,4 +28,6 @@ dependencies {
     implementation("net.steppschuh.markdowngenerator:markdowngenerator:1.3.1.1")
     implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.simpleflatmapper:sfm-csv:8.2.3")
+    implementation("org.csveed:csveed:0.7.5")
+    implementation("org.slf4j:slf4j-nop:2.0.7")
 }

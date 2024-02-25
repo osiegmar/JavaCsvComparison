@@ -8,6 +8,7 @@ import java.util.List;
 
 import comparison.impl.CommonsCsvImpl;
 import comparison.impl.CsvImpl;
+import comparison.impl.CsveedImpl;
 import comparison.impl.FastCsvImpl;
 import comparison.impl.JacksonCsvImpl;
 import comparison.impl.JavaCsvImpl;
@@ -22,6 +23,7 @@ public final class Comparison {
 
     private static final List<CsvImpl> IMPLS = List.of(
         new CommonsCsvImpl(),
+        new CsveedImpl(),
         new FastCsvImpl(),
         new JacksonCsvImpl(),
         new JavaCsvImpl(),

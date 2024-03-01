@@ -13,6 +13,7 @@ import comparison.impl.FastCsvImpl;
 import comparison.impl.JacksonCsvImpl;
 import comparison.impl.JavaCsvImpl;
 import comparison.impl.OpenCsvImpl;
+import comparison.impl.PicocsvImpl;
 import comparison.impl.SesseltjonnaCsvImpl;
 import comparison.impl.SfmCsvImpl;
 import comparison.impl.SuperCsvImpl;
@@ -28,6 +29,7 @@ public final class Comparison {
         new JacksonCsvImpl(),
         new JavaCsvImpl(),
         new OpenCsvImpl(),
+        new PicocsvImpl(),
         new SesseltjonnaCsvImpl(),
         new SfmCsvImpl(),
         new SuperCsvImpl(),

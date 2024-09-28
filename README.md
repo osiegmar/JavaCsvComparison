@@ -16,15 +16,15 @@ This benchmark project was created for the development of
 
 ## Implementations under test
 
-- Commons CSV 1.10.0
-- CSVeed 0.7.5
-- FastCSV 3.0.0
-- Jackson CSV 2.16.1
+- Commons CSV 1.12.0
+- CSVeed 0.8.2
+- FastCSV 3.3.1
+- Jackson CSV 2.18.0
 - Java CSV 2.0
 - Opencsv 5.9
 - picocsv 2.4.0
 - sesseltjonna-csv 1.0.25
-- SimpleFlatMapper 8.2.3
+- SimpleFlatMapper 9.0.2
 - Super CSV 2.4.0
 - Univocity 2.9.1
 

@@ -126,11 +126,11 @@ from the outside.
 | `z"D"z`  | —     | `zD"z`                           | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
 
 ## Unexpected results in picocsv
-| Input | Flags | picocsv | Expected | Implemented as expected by                                                                                          |
-| ----- | ----- | ------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
-| `␊D`  | —     | `⏎D`    | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `␍D`  | —     | `⏎D`    | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                              |
-| `␍␊D` | —     | `⏎D`    | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV            |
+| Input | Flags  | picocsv | Expected | Implemented as expected by                                             |
+| ----- | ------ | ------- | -------- | ---------------------------------------------------------------------- |
+| `␊D`  | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV, Univocity |
+| `␍D`  | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV            |
+| `␍␊D` | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV            |
 
 ## Unexpected results in sesseltjonna-csv
 | Input      | Flags | sesseltjonna-csv           | Expected   | Implemented as expected by                                                                         |
@@ -138,7 +138,7 @@ from the outside.
 | `A,␊B`     | —     | :boom: CsvException        | `A↷◯⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
 | `␣,␊D`     | —     | :boom: CsvException        | `␣↷◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
 | `A␍B`      | —     | `A␍B`                      | `A⏎B`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV    |
-| `␍D`       | —     | `␍D`                       | `◯⏎D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV             |
+| `␍D`       | —     | `␍D`                       | `◯⏎D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV    |
 | `A,"B`     | —     | :boom: CsvBuilderException | `A↷B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                             |
 | `"A,B`     | —     | :boom: CsvBuilderException | `A,B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                             |
 | `A␊B,C`    | —     | `A⏎B,C`                    | `A⏎B↷C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
@@ -176,12 +176,12 @@ from the outside.
 | -------- | ------ | --------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | `A␍B`    | —      | `A␍B`     | `A⏎B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV                   |
 | `D␍`     | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV         |
-| `␍D`     | —      | `␍D`      | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, Simpleflatmapper, SuperCSV                            |
-| `␍D`     | `[SE]` | `␍D`      | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, picocsv, SuperCSV                                              |
+| `␍D`     | —      | `␍D`      | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV                   |
+| `␍D`     | `[SE]` | `␍D`      | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                                       |
 | `A␍␊B`   | —      | `A␍⏎B`    | `A⏎B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
 | `D␍␊`    | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV         |
-| `␍␊D`    | —      | `␍⏎D`     | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV          |
-| `␍␊D`    | `[SE]` | `␍⏎D`     | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, picocsv, SuperCSV                                              |
+| `␍␊D`    | —      | `␍⏎D`     | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
+| `␍␊D`    | `[SE]` | `␍⏎D`     | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                                       |
 | `"D"␣`   | —      | `D`       | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV                                                                               |
 | `"A,B"␣` | —      | `A,B`     | `A,B␣`   | FastCSV, picocsv, SuperCSV                                                                                        |
 | `"D"z`   | —      | `"D"z`    | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV                                                                               |
@@ -204,16 +204,16 @@ from the outside.
 | `␣,␊D`     | —      | `␣↷◯⏎D`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `A␊B`      | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `D␊`       | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␊D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␊D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :white_check_mark: | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :white_check_mark: |
+| `␊D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
+| `␊D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :white_check_mark: |
 | `A␍B`      | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
 | `D␍`       | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :white_check_mark: | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
+| `␍D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
+| `␍D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
 | `A␍␊B`     | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
 | `D␍␊`      | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍␊D`      | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍␊D`      | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :white_check_mark: | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
+| `␍␊D`      | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
+| `␍␊D`      | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
 | `"␣D␣"`    | —      | `␣D␣`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `"D"`      | —      | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
 | `"D",D`    | —      | `D↷D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |

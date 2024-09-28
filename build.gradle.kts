@@ -30,5 +30,5 @@ dependencies {
     implementation("org.simpleflatmapper:sfm-csv:8.2.3")
     implementation("org.csveed:csveed:0.7.5")
     implementation("org.slf4j:slf4j-nop:2.0.7")
-    implementation("com.github.nbbrd.picocsv:picocsv:2.2.2")
+    implementation("com.github.nbbrd.picocsv:picocsv:2.4.0")
 }

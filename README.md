@@ -22,6 +22,7 @@ This benchmark project was created for the development of
 - Jackson CSV 2.16.1
 - Java CSV 2.0
 - Opencsv 5.9
+- picocsv 2.4.0
 - sesseltjonna-csv 1.0.25
 - SimpleFlatMapper 8.2.3
 - Super CSV 2.4.0

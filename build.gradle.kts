@@ -1,6 +1,8 @@
 plugins {
-    application
+    java
     checkstyle
+    id("io.qameta.allure") version "2.12.0" apply false
+    id("io.qameta.allure-aggregate-report") version "2.12.0"
 }
 
 java {
@@ -9,31 +11,48 @@ java {
     }
 }
 
-application {
-    mainClass = "comparison.Comparison"
+allprojects {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+
+    tasks.withType<JavaCompile> {
+        options.compilerArgs.addAll(listOf("-parameters"))
+    }
 }
 
-repositories {
-    mavenCentral()
+subprojects {
+    apply(plugin = "java")
+    apply(plugin = "io.qameta.allure")
+
+    dependencies {
+        implementation(rootProject)
+
+        testImplementation(platform("org.junit:junit-bom:5.11.3"))
+        testImplementation("org.junit.jupiter:junit-jupiter")
+        testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+        testImplementation("io.qameta.allure:allure-junit5:2.29.0")
+    }
+
+    tasks.withType<Test> {
+        useJUnitPlatform()
+
+        ignoreFailures = true
+
+        testLogging {
+            events = emptySet()
+        }
+
+        systemProperty("tests.path", "${rootDir}/tests")
+
+        finalizedBy("allureReport")
+    }
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.18.0")
-    implementation("com.github.skjolber.sesseltjonna-csv:parser:1.0.25")
-    implementation("com.opencsv:opencsv:5.9")
-    implementation("com.univocity:univocity-parsers:2.9.1")
-    implementation("de.siegmar:fastcsv:3.3.1")
-    implementation("net.sf.supercsv:super-csv:2.4.0")
-    implementation("net.sourceforge.javacsv:javacsv:2.0")
-    implementation("net.steppschuh.markdowngenerator:markdowngenerator:1.3.1.1")
-    implementation("org.apache.commons:commons-csv:1.10.0")
-    implementation("org.simpleflatmapper:sfm-csv:8.2.3")
-    implementation("org.csveed:csveed:0.7.5")
-    implementation("org.slf4j:slf4j-nop:2.0.7")
-    implementation("com.github.nbbrd.picocsv:picocsv:2.4.0")
-    implementation("org.apache.commons:commons-csv:1.12.0")
-    implementation("org.simpleflatmapper:sfm-csv:9.0.2")
-    implementation("org.csveed:csveed:0.8.2")
-    implementation("org.slf4j:slf4j-nop:2.0.16")
-    implementation("com.github.nbbrd.picocsv:picocsv:2.4.0")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1")
+    implementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
+    implementation("io.qameta.allure:allure-java-commons:2.29.0")
 }

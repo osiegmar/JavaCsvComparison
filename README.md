@@ -1,4 +1,4 @@
-# Parsing non-standard CSV with different Java CSV libraries
+# Interpretation of the CSV Standard by Java Libraries
 
 Unfortunately, there is no real industry standard for CSV files.
 The closest thing we do currently have (since 2005) is [RFC 4180](https://tools.ietf.org/html/rfc4180).
@@ -7,235 +7,61 @@ CSV data that doesn't match this RFC?
 
 This project is about to find that out...
 
-This benchmark project was created for the development of
-[FastCSV](https://github.com/osiegmar/FastCSV).
-
 > [!NOTE]
-> Since this comparison uses the result of FastCSV as a reference value (expected result), the comparison is highly
-> biased.
+> This project was created during the development of [FastCSV].
+> Since this comparison uses the result of FastCSV as a reference value (expected result),
+> the comparison is highly biased.
 
-## Implementations under test
+## Test results
 
-- Commons CSV 1.12.0
-- CSVeed 0.8.2
-- FastCSV 3.3.1
-- Jackson CSV 2.18.0
-- Java CSV 2.0
-- Opencsv 5.9
-- picocsv 2.4.0
-- sesseltjonna-csv 1.0.25
-- SimpleFlatMapper 9.0.2
-- Super CSV 2.4.0
-- Univocity 2.9.1
+The [test suite](tests) consists of currently 60 tests in total.
+To pass a test, the library must return the expected result or throw an exception if the input is invalid.
+If the library lacks a feature (like skipping empty lines or comments), the test is marked as skipped.
+If a test is neither passed nor skipped, it is marked as failed.
+
+| Library            | Checks passed |     Checks skipped |      Checks failed |
+|:-------------------|--------------:|-------------------:|-------------------:|
+| [Commons CSV]      |            48 | :heavy_minus_sign: |                 12 |
+| [CSVeed]           |            28 |                  7 |                 25 |
+| [FastCSV]          |            60 | :heavy_minus_sign: | :heavy_minus_sign: |
+| [Jackson CSV]      |            49 |                  7 |                  4 |
+| [Java CSV]         |            51 |                  7 |                  2 |
+| [Opencsv]          |            38 |                 17 |                  5 |
+| [picocsv]          |            50 |                  3 |                  7 |
+| [sesseltjonna-csv] |            30 |                 17 |                 13 |
+| [SimpleFlatMapper] |            41 |                 17 |                  2 |
+| [Super CSV]        |            49 |                  7 |                  4 |
+| [Univocity]        |            51 |                  7 |                  2 |
+
+A detailed report can be found at: https://osiegmar.github.io/JavaCsvComparison
+
+The tests clearly show that there are significant differences between the libraries –
+especially when it comes to non-standardized data.
 
 ## Execute
 
-    ./gradlew run
+To run the tests and generate the report locally, execute the following command:
 
-# Results
+```shell
+./gradlew test allureAggregateServe
+```
 
-To have results which are unambiguous to compare (even with multi-line records), we need to use
-some special characters.
-The libraries itself don't get in touch with these special characters as the conversion is done
-from the outside.
+## Library Implementor?
 
-| Character | Usage             |
-| --------- | ----------------- |
-| `␣`       | Space             |
-| `␍`       | Carriage return   |
-| `␊`       | Line feed         |
-| `[SE]`    | Skip emtpy rows   |
-| `⏎`       | New row           |
-| `↷`       | New column        |
-| `◯`       | Empty field       |
-| `∅`       | Empty list        |
+The tests are written in a way that they can be easily adapted to other libraries and languages.
+They can also be used as unit tests for your library, like done in [FastCSV].
 
-## Unexpected results in Commons CSV
-| Input    | Flags | Commons CSV                 | Expected | Implemented as expected by                             |
-| -------- | ----- | --------------------------- | -------- | ------------------------------------------------------ |
-| `A,"B`   | —     | :boom: UncheckedIOException | `A↷B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity |
-| `"A,B`   | —     | :boom: UncheckedIOException | `A,B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity |
-| `"D"␣`   | —     | `D`                         | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV                    |
-| `"A,B"␣` | —     | `A,B`                       | `A,B␣`   | FastCSV, picocsv, SuperCSV                             |
-| `"D"z`   | —     | :boom: UncheckedIOException | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV                    |
-| `"A,B"z` | —     | :boom: UncheckedIOException | `A,Bz`   | FastCSV, picocsv, SuperCSV                             |
+Feel free to use the tests for your own project.
 
-## Unexpected results in CSVeed
-| Input      | Flags | CSVeed              | Expected   | Implemented as expected by                                                                                           |
-| ---------- | ----- | ------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------- |
-| `␣`        | —     | `◯`                 | `␣`        | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `␣,␣`      | —     | `◯↷◯`               | `␣↷␣`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `,␣`       | —     | `◯↷◯`               | `◯↷␣`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `␣D`       | —     | `D`                 | `␣D`       | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `␣D␣,␣D␣`  | —     | `D↷D`               | `␣D␣↷␣D␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `A,␊B`     | —     | :boom: CsvException | `A↷◯⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity                   |
-| `␣,`       | —     | `◯↷◯`               | `␣↷◯`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `␣,␊D`     | —     | :boom: CsvException | `␣↷◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity                   |
-| `D␊`       | —     | `D⏎◯`               | `D`        | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV, Univocity |
-| `D␍`       | —     | `D⏎◯`               | `D`        | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV            |
-| `D␍␊`      | —     | `D⏎◯`               | `D`        | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV            |
-| `A,"B`     | —     | :boom: CsvException | `A↷B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                               |
-| `A,B"`     | —     | :boom: CsvException | `A↷B"`     | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `"A,B`     | —     | :boom: CsvException | `A,B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                               |
-| `"A␍␊B"`   | —     | `A␍B`               | `A␍␊B`     | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `A␊B,C`    | —     | :boom: CsvException | `A⏎B↷C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity                   |
-| `A,B␊C`    | —     | :boom: CsvException | `A↷B⏎C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity                   |
-| `A␊;B,C␊D` | —     | :boom: CsvException | `A⏎;B↷C⏎D` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity                   |
-| `"D"␣`     | —     | `D`                 | `D␣`       | FastCSV, Opencsv, picocsv, SuperCSV                                                                                  |
-| `"A,B"␣`   | —     | `A,B`               | `A,B␣`     | FastCSV, picocsv, SuperCSV                                                                                           |
-| `␣"D"`     | —     | `D`                 | `␣"D"`     | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `␣"D"␣`    | —     | `D`                 | `␣"D"␣`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `"D"z`     | —     | :boom: CsvException | `Dz`       | FastCSV, Opencsv, picocsv, SuperCSV                                                                                  |
-| `"A,B"z`   | —     | :boom: CsvException | `A,Bz`     | FastCSV, picocsv, SuperCSV                                                                                           |
-| `z"D"`     | —     | :boom: CsvException | `z"D"`     | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `z"A,B"`   | —     | :boom: CsvException | `z"A↷B"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
-| `z"D"z`    | —     | :boom: CsvException | `z"D"z`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity                    |
 
-## Unexpected results in JacksonCSV
-| Input    | Flags | JacksonCSV                         | Expected | Implemented as expected by                             |
-| -------- | ----- | ---------------------------------- | -------- | ------------------------------------------------------ |
-| `A,"B`   | —     | :boom: RuntimeJsonMappingException | `A↷B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity |
-| `"A,B`   | —     | :boom: RuntimeJsonMappingException | `A,B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity |
-| `"D"␣`   | —     | `D`                                | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV                    |
-| `"A,B"␣` | —     | `A,B`                              | `A,B␣`   | FastCSV, picocsv, SuperCSV                             |
-| `"D"z`   | —     | :boom: RuntimeJsonMappingException | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV                    |
-| `"A,B"z` | —     | :boom: RuntimeJsonMappingException | `A,Bz`   | FastCSV, picocsv, SuperCSV                             |
-
-## Unexpected results in JavaCSV
-| Input    | Flags | JavaCSV | Expected | Implemented as expected by          |
-| -------- | ----- | ------- | -------- | ----------------------------------- |
-| `"D"␣`   | —     | `D`     | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV |
-| `"A,B"␣` | —     | `A,B`   | `A,B␣`   | FastCSV, picocsv, SuperCSV          |
-| `"D"z`   | —     | `D`     | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV |
-| `"A,B"z` | —     | `A,B`   | `A,Bz`   | FastCSV, picocsv, SuperCSV          |
-
-## Unexpected results in Opencsv
-| Input    | Flags | Opencsv                          | Expected | Implemented as expected by                                                                                |
-| -------- | ----- | -------------------------------- | -------- | --------------------------------------------------------------------------------------------------------- |
-| `A,"B`   | —     | :boom: CsvMalformedLineException | `A↷B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                    |
-| `A,B"`   | —     | :boom: CsvMalformedLineException | `A↷B"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `"A,B`   | —     | :boom: CsvMalformedLineException | `A,B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                    |
-| `"A␍B"`  | —     | `A␊B`                            | `A␍B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A␍␊B"` | —     | `A␊B`                            | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `"A,B"␣` | —     | `A,B"␣`                          | `A,B␣`   | FastCSV, picocsv, SuperCSV                                                                                |
-| `␣"D"`   | —     | `␣D`                             | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `␣"D"␣`  | —     | `␣D"␣`                           | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `"A,B"z` | —     | `A,B"z`                          | `A,Bz`   | FastCSV, picocsv, SuperCSV                                                                                |
-| `z"D"`   | —     | `zD`                             | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `z"A,B"` | —     | `zA,B`                           | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `z"D"z`  | —     | `zD"z`                           | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-
-## Unexpected results in picocsv
-| Input | Flags  | picocsv | Expected | Implemented as expected by                                             |
-| ----- | ------ | ------- | -------- | ---------------------------------------------------------------------- |
-| `␊D`  | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV, Univocity |
-| `␍D`  | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV            |
-| `␍␊D` | `[SE]` | `◯⏎D`   | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV            |
-
-## Unexpected results in sesseltjonna-csv
-| Input      | Flags | sesseltjonna-csv           | Expected   | Implemented as expected by                                                                         |
-| ---------- | ----- | -------------------------- | ---------- | -------------------------------------------------------------------------------------------------- |
-| `A,␊B`     | —     | :boom: CsvException        | `A↷◯⏎B`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
-| `␣,␊D`     | —     | :boom: CsvException        | `␣↷◯⏎D`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
-| `A␍B`      | —     | `A␍B`                      | `A⏎B`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV    |
-| `␍D`       | —     | `␍D`                       | `◯⏎D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV    |
-| `A,"B`     | —     | :boom: CsvBuilderException | `A↷B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                             |
-| `"A,B`     | —     | :boom: CsvBuilderException | `A,B`      | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                             |
-| `A␊B,C`    | —     | `A⏎B,C`                    | `A⏎B↷C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
-| `A,B␊C`    | —     | :boom: CsvException        | `A↷B⏎C`    | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
-| `A␊;B,C␊D` | —     | `A⏎;B,C⏎D`                 | `A⏎;B↷C⏎D` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV, Univocity |
-| `"D"␣`     | —     | `D`                        | `D␣`       | FastCSV, Opencsv, picocsv, SuperCSV                                                                |
-| `"A,B"␣`   | —     | `A,B`                      | `A,B␣`     | FastCSV, picocsv, SuperCSV                                                                         |
-| `"D"z`     | —     | `D`                        | `Dz`       | FastCSV, Opencsv, picocsv, SuperCSV                                                                |
-| `"A,B"z`   | —     | `A,B`                      | `A,Bz`     | FastCSV, picocsv, SuperCSV                                                                         |
-
-## Unexpected results in Simpleflatmapper
-| Input    | Flags | Simpleflatmapper | Expected | Implemented as expected by          |
-| -------- | ----- | ---------------- | -------- | ----------------------------------- |
-| `"D"␣`   | —     | `D"␣`            | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV |
-| `"A,B"␣` | —     | `A,B"␣`          | `A,B␣`   | FastCSV, picocsv, SuperCSV          |
-| `"D"z`   | —     | `D"z`            | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV |
-| `"A,B"z` | —     | `A,B"z`          | `A,Bz`   | FastCSV, picocsv, SuperCSV          |
-
-## Unexpected results in SuperCSV
-| Input    | Flags | SuperCSV                 | Expected | Implemented as expected by                                                                                |
-| -------- | ----- | ------------------------ | -------- | --------------------------------------------------------------------------------------------------------- |
-| `A,"B`   | —     | :boom: SuperCsvException | `A↷B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                    |
-| `A,B"`   | —     | :boom: SuperCsvException | `A↷B"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `"A,B`   | —     | :boom: SuperCsvException | `A,B`    | FastCSV, JavaCSV, picocsv, Simpleflatmapper, Univocity                                                    |
-| `"A␍B"`  | —     | `A␊B`                    | `A␍B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity |
-| `"A␍␊B"` | —     | `A␊B`                    | `A␍␊B`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `␣"D"`   | —     | `␣D`                     | `␣"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `␣"D"␣`  | —     | `␣D␣`                    | `␣"D"␣`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `z"D"`   | —     | `zD`                     | `z"D"`   | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `z"A,B"` | —     | `zA,B`                   | `z"A↷B"` | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-| `z"D"z`  | —     | `zDz`                    | `z"D"z`  | Commons CSV, FastCSV, JacksonCSV, JavaCSV, picocsv, sesseltjonna-csv, Simpleflatmapper, Univocity         |
-
-## Unexpected results in Univocity
-| Input    | Flags  | Univocity | Expected | Implemented as expected by                                                                                        |
-| -------- | ------ | --------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
-| `A␍B`    | —      | `A␍B`     | `A⏎B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV                   |
-| `D␍`     | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV         |
-| `␍D`     | —      | `␍D`      | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, Simpleflatmapper, SuperCSV                   |
-| `␍D`     | `[SE]` | `␍D`      | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                                       |
-| `A␍␊B`   | —      | `A␍⏎B`    | `A⏎B`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `D␍␊`    | —      | `D␍`      | `D`      | Commons CSV, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV         |
-| `␍␊D`    | —      | `␍⏎D`     | `◯⏎D`    | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, Opencsv, picocsv, sesseltjonna-csv, Simpleflatmapper, SuperCSV |
-| `␍␊D`    | `[SE]` | `␍⏎D`     | `D`      | Commons CSV, CSVeed, FastCSV, JacksonCSV, JavaCSV, SuperCSV                                                       |
-| `"D"␣`   | —      | `D`       | `D␣`     | FastCSV, Opencsv, picocsv, SuperCSV                                                                               |
-| `"A,B"␣` | —      | `A,B`     | `A,B␣`   | FastCSV, picocsv, SuperCSV                                                                                        |
-| `"D"z`   | —      | `"D"z`    | `Dz`     | FastCSV, Opencsv, picocsv, SuperCSV                                                                               |
-| `"A,B"z` | —      | `"A,B"z`  | `A,Bz`   | FastCSV, picocsv, SuperCSV                                                                                        |
-
-## Big picture
-| Input      | Flags  | Expected   | Commons CSV        | CSVeed             | FastCSV            | JacksonCSV         | JavaCSV            | Opencsv            | picocsv            | sesseltjonna-csv   | Simpleflatmapper   | SuperCSV           | Univocity          |
-| ---------- | ------ | ---------- | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ | ------------------ |
-| `D`        | —      | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `D,D`      | —      | `D↷D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `,D`       | —      | `◯↷D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣`        | —      | `␣`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣,␣`      | —      | `␣↷␣`      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `,␣`       | —      | `◯↷␣`      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣D`       | —      | `␣D`       | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣D␣,␣D␣`  | —      | `␣D␣↷␣D␣`  | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `D,`       | —      | `D↷◯`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `A,␊B`     | —      | `A↷◯⏎B`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣,`       | —      | `␣↷◯`      | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␣,␊D`     | —      | `␣↷◯⏎D`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `A␊B`      | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `D␊`       | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␊D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `␊D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :white_check_mark: |
-| `A␍B`      | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
-| `D␍`       | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍D`       | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍D`       | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
-| `A␍␊B`     | —      | `A⏎B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `D␍␊`      | —      | `D`        | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍␊D`      | —      | `◯⏎D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                |
-| `␍␊D`      | `[SE]` | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :heavy_minus_sign: | :x:                | :heavy_minus_sign: | :heavy_minus_sign: | :white_check_mark: | :x:                |
-| `"␣D␣"`    | —      | `␣D␣`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"D"`      | —      | `D`        | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"D",D`    | —      | `D↷D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `D,"D"`    | —      | `D↷D`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `A,"B`     | —      | `A↷B`      | :boom:             | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: |
-| `A,B"`     | —      | `A↷B"`     | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: |
-| `"A,B`     | —      | `A,B`      | :boom:             | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: | :boom:             | :white_check_mark: |
-| `"""D"`    | —      | `"D`       | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"D"""`    | —      | `D"`       | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"A""B"`   | —      | `A"B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"A␊B"`    | —      | `A␊B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"A␍B"`    | —      | `A␍B`      | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `"A␍␊B"`   | —      | `A␍␊B`     | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `A␊B,C`    | —      | `A⏎B↷C`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `A,B␊C`    | —      | `A↷B⏎C`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `A␊;B,C␊D` | —      | `A⏎;B↷C⏎D` | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: |
-| `"D"␣`     | —      | `D␣`       | :x:                | :x:                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
-| `"A,B"␣`   | —      | `A,B␣`     | :x:                | :x:                | :white_check_mark: | :x:                | :x:                | :x:                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
-| `␣"D"`     | —      | `␣"D"`     | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `␣"D"␣`    | —      | `␣"D"␣`    | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `"D"z`     | —      | `Dz`       | :boom:             | :boom:             | :white_check_mark: | :boom:             | :x:                | :white_check_mark: | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
-| `"A,B"z`   | —      | `A,Bz`     | :boom:             | :boom:             | :white_check_mark: | :boom:             | :x:                | :x:                | :white_check_mark: | :x:                | :x:                | :white_check_mark: | :x:                |
-| `z"D"`     | —      | `z"D"`     | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `z"A,B"`   | —      | `z"A↷B"`   | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
-| `z"D"z`    | —      | `z"D"z`    | :white_check_mark: | :boom:             | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: | :white_check_mark: | :white_check_mark: | :x:                | :white_check_mark: |
+[Commons CSV]: https://commons.apache.org/proper/commons-csv/
+[CSVeed]: https://42bv.github.io/CSVeed/
+[FastCSV]: https://fastcsv.org
+[Jackson CSV]: https://github.com/FasterXML/jackson-dataformats-text
+[Java CSV]: https://sourceforge.net/projects/javacsv/
+[Opencsv]: https://opencsv.sourceforge.net
+[picocsv]: https://github.com/nbbrd/picocsv
+[sesseltjonna-csv]: https://github.com/skjolber/sesseltjonna-csv
+[SimpleFlatMapper]: https://simpleflatmapper.org
+[Super CSV]: https://super-csv.github.io/super-csv/index.html
+[Univocity]: https://github.com/uniVocity/univocity-parsers

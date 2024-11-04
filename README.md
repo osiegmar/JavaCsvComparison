@@ -27,7 +27,7 @@ If a test is neither passed nor skipped, it is marked as failed.
 | [Jackson CSV]      |            49 |                  7 |                  4 |
 | [Java CSV]         |            51 |                  7 |                  2 |
 | [Opencsv]          |            38 |                 17 |                  5 |
-| [picocsv]          |            50 |                  3 |                  7 |
+| [picocsv]          |            60 | :heavy_minus_sign: | :heavy_minus_sign: |
 | [sesseltjonna-csv] |            30 |                 17 |                 13 |
 | [SimpleFlatMapper] |            41 |                 17 |                  2 |
 | [Super CSV]        |            49 |                  7 |                  4 |

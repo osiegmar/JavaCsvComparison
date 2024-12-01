@@ -33,7 +33,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-        testImplementation("io.qameta.allure:allure-junit5:2.29.0")
+        testImplementation("io.qameta.allure:allure-junit5:2.29.1")
     }
 
     tasks.withType<Test> {

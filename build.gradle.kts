@@ -52,7 +52,7 @@ subprojects {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.2")
     implementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
     implementation("io.qameta.allure:allure-java-commons:2.29.0")
 }

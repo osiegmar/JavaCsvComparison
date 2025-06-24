@@ -24,6 +24,7 @@ class FastCsvTest extends AbstractTest {
 
     private static CsvReader.CsvReaderBuilder configure(final TestSpecSettings settings) {
         return CsvReader.builder()
+            .allowExtraFields(true)
             .commentStrategy(switch (settings.commentMode()) {
                 case NONE -> CommentStrategy.NONE;
                 case READ -> CommentStrategy.READ;

@@ -1,3 +1,3 @@
 dependencies {
-    testImplementation("de.siegmar:fastcsv:3.3.1")
+    testImplementation("de.siegmar:fastcsv:4.0.0")
 }

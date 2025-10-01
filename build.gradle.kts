@@ -33,7 +33,7 @@ subprojects {
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-        testImplementation("io.qameta.allure:allure-junit5:2.29.0")
+        testImplementation("io.qameta.allure:allure-junit5:2.30.0")
     }
 
     tasks.withType<Test> {
@@ -54,5 +54,5 @@ subprojects {
 dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.1")
     implementation("org.junit.jupiter:junit-jupiter-params:5.11.3")
-    implementation("io.qameta.allure:allure-java-commons:2.29.0")
+    implementation("io.qameta.allure:allure-java-commons:2.30.0")
 }
